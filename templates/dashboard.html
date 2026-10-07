@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>TaskHub - Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <h2>TaskHub</h2>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/services">Services</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+    </nav>
+
+
+    <main class="dashboard">
+
+        <h1>Welcome, {{ name }} 👋</h1>
+
+        <p>Your TaskHub dashboard</p>
+
+
+        <a href="/services" class="btn">
+            Book a Service
+        </a>
+
+
+        <h2>My Tasks</h2>
+
+
+        {% if tasks %}
+
+            {% for task in tasks %}
+
+            <div class="task-card">
+
+                <h3>{{ task["service"] }}</h3>
+
+                <p>
+                    📍 {{ task["location"] }}
+                </p>
+
+                <p>
+                    📅 {{ task["task_date"] }}
+                </p>
+
+                <p>
+                    ⏰ {{ task["task_time"] }}
+                </p>
+
+                <p>
+                    {{ task["description"] }}
+                </p>
+
+                <strong>
+                    Status: {{ task["status"] }}
+                </strong>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>You haven't booked any services yet.</p>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>

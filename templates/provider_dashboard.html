@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>TaskHub - Provider Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <h2>TaskHub</h2>
+
+        <div>
+
+            <a href="/">Home</a>
+
+            <a href="/services">Services</a>
+
+            <a href="/logout">Logout</a>
+
+        </div>
+
+    </nav>
+
+
+    <main class="dashboard">
+
+        <h1>Provider Dashboard</h1>
+
+        <p>
+            Welcome, {{ name }} 👋
+        </p>
+
+
+        <!-- AVAILABLE TASKS -->
+
+        <h2>Available Jobs</h2>
+
+
+        {% if pending_tasks %}
+
+            {% for task in pending_tasks %}
+
+            <div class="task-card">
+
+                <h3>
+                    {{ task["service"] }}
+                </h3>
+
+                <p>
+                    👤 Customer:
+                    {{ task["customer_name"] }}
+                </p>
+
+                <p>
+                    📍 {{ task["location"] }}
+                </p>
+
+                <p>
+                    📅 {{ task["task_date"] }}
+                </p>
+
+                <p>
+                    ⏰ {{ task["task_time"] }}
+                </p>
+
+                <p>
+                    📝 {{ task["description"] }}
+                </p>
+
+
+                <a
+                    class="btn"
+                    href="/accept_task/{{ task['id'] }}"
+                >
+                    Accept
+                </a>
+
+
+                <a
+                    class="btn"
+                    href="/reject_task/{{ task['id'] }}"
+                >
+                    Reject
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No new jobs available.
+            </p>
+
+        {% endif %}
+
+
+
+        <!-- MY TASKS -->
+
+        <h2>My Tasks</h2>
+
+
+        {% if my_tasks %}
+
+            {% for task in my_tasks %}
+
+            <div class="task-card">
+
+                <h3>
+                    {{ task["service"] }}
+                </h3>
+
+                <p>
+                    Customer:
+                    {{ task["customer_name"] }}
+                </p>
+
+                <p>
+                    Location:
+                    {{ task["location"] }}
+                </p>
+
+                <p>
+                    Status:
+                    <strong>
+                        {{ task["status"] }}
+                    </strong>
+                </p>
+
+
+                {% if task["status"] == "Accepted" %}
+
+                <a
+                    class="btn"
+                    href="/start_task/{{ task['id'] }}"
+                >
+                    Start Task
+                </a>
+
+                {% endif %}
+
+
+                {% if task["status"] == "In Progress" %}
+
+                <a
+                    class="btn"
+                    href="/complete_task/{{ task['id'] }}"
+                >
+                    Mark Completed
+                </a>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                You haven't accepted any jobs yet.
+            </p>
+
+        {% endif %}
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>TaskHub - Services</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <h2>TaskHub</h2>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+    </nav>
+
+
+    <main class="services-page">
+
+        <h1>Our Services</h1>
+
+        <p>Choose a service you need.</p>
+
+
+        <div class="services-grid">
+
+
+            <div class="service-card">
+
+                <h2>🔧 Electrician</h2>
+
+                <p>
+                    Electrical repair and installation.
+                </p>
+
+                <a href="/book?service=Electrician">
+                    Book Now
+                </a>
+
+            </div>
+
+
+            <div class="service-card">
+
+                <h2>🚰 Plumber</h2>
+
+                <p>
+                    Plumbing repair and maintenance.
+                </p>
+
+                <a href="/book?service=Plumber">
+                    Book Now
+                </a>
+
+            </div>
+
+
+            <div class="service-card">
+
+                <h2>🛠️ Maintenance</h2>
+
+                <p>
+                    Home and equipment maintenance.
+                </p>
+
+                <a href="/book?service=Maintenance">
+                    Book Now
+                </a>
+
+            </div>
+
+
+            <div class="service-card">
+
+                <h2>🚚 Heavy Transport</h2>
+
+                <p>
+                    Transport and moving services.
+                </p>
+
+                <a href="/book?service=Heavy Transport">
+                    Book Now
+                </a>
+
+            </div>
+
+
+            <div class="service-card">
+
+                <h2>📦 Local Delivery</h2>
+
+                <p>
+                    Fast local delivery services.
+                </p>
+
+                <a href="/book?service=Local Delivery">
+                    Book Now
+                </a>
+
+            </div>
+
+
+            <div class="service-card">
+
+                <h2>🏠 Household Work</h2>
+
+                <p>
+                    Help with everyday household tasks.
+                </p>
+
+                <a href="/book?service=Household Work">
+                    Book Now
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

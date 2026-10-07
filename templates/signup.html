@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>TaskHub - Sign Up</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <h2>TaskHub</h2>
+
+        <div>
+
+            <a href="/">Home</a>
+
+            <a href="/login">Login</a>
+
+        </div>
+
+    </nav>
+
+
+    <main class="form-container">
+
+        <h1>Create Account</h1>
+
+        <form method="POST">
+
+            <label>Name</label>
+
+            <input
+                type="text"
+                name="name"
+                required
+            >
+
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                name="email"
+                required
+            >
+
+
+            <label>Mobile Number</label>
+
+            <input
+                type="tel"
+                name="mobile"
+                required
+            >
+
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                required
+            >
+
+
+            <label>Account Type</label>
+
+            <select name="role" required>
+
+                <option value="customer">
+                    Customer
+                </option>
+
+                <option value="provider">
+                    Service Provider
+                </option>
+
+            </select>
+
+
+            <button type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+
+        <p>
+            Already have an account?
+            <a href="/login">Login</a>
+        </p>
+
+    </main>
+
+</body>
+
+</html>

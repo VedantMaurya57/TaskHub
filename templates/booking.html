@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>TaskHub - Book Service</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <h2>TaskHub</h2>
+
+        <a href="/dashboard">Dashboard</a>
+
+    </nav>
+
+
+    <main class="form-container">
+
+        <h1>Book a Service</h1>
+
+        <form method="POST">
+
+            <label>Service</label>
+
+            <input
+                type="text"
+                name="service"
+                value="{{ service }}"
+                required
+            >
+
+
+            <label>Location</label>
+
+            <input
+                type="text"
+                name="location"
+                placeholder="Enter your location"
+                required
+            >
+
+
+            <label>Date</label>
+
+            <input
+                type="date"
+                name="task_date"
+                required
+            >
+
+
+            <label>Time</label>
+
+            <input
+                type="time"
+                name="task_time"
+                required
+            >
+
+
+            <label>Describe your task</label>
+
+            <textarea
+                name="description"
+                placeholder="Tell us what you need..."
+            ></textarea>
+
+
+            <button type="submit">
+                Request Service
+            </button>
+
+        </form>
+
+    </main>
+
+</body>
+
+</html>
