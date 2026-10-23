@@ -61,19 +61,14 @@ footer{border-top:1px solid var(--ln);padding:24px 0 90px;color:var(--soft);font
 <nav><div class="w"><a class="lg" href="#/"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#38E1C6"/><path d="M8 11h16M16 11v13" stroke="#04201B" stroke-width="3.4" stroke-linecap="round"/><circle cx="24" cy="23" r="2.4" fill="#04201B"/></svg>TaskHub</a><div class="nl" id="nl"></div><div class="sp"></div><div id="nr" class="r" style="gap:8px"></div></div></nav>
 <main id="app"></main>
 <div class="bn" id="bn"></div><div id="ts" role="status"></div>
-<footer><div class="w r"><span>TaskHub demo · Mumbai area only · all data is fictional and stored in this browser</span><span>Your task. Our trusted people.</span></div></footer>
+<footer><div class="w r"><span>TaskHub · Mumbai area</span><span>Your task. Our trusted people.</span></div></footer>
 <script>
 const K='th1',$=s=>document.querySelector(s),E=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const AREAS=['Andheri','Bandra','Borivali','Powai','Dadar','Thane','Navi Mumbai'];
 const dt=n=>new Date(Date.now()+n*864e5).toISOString().slice(0,10),now=()=>Date.now(),id=p=>p+Math.random().toString(36).slice(2,8);
-function seed(){const U=(i,n,a,roles,o)=>({id:i,name:n,email:i+'@demo.in',pw:'demo1234',area:a,roles,mode:roles[0],at:now()-864e5*90,skills:[],cats:[],exp:'',avail:'',bio:'',ver:'Phone verified (demo)',...o});
-const t=(i,by,title,cat,area,date,b,o)=>({id:i,by,title,desc:title+'. Please be on time and bring basic tools if needed. Message me for details.',cat,sub:'',area,date,time:'10:00',budget:b,urg:'Normal',req:'',status:'Open',helper:null,at:now()-3600e3*Math.random()*70,hist:[{s:'Open',t:now(),by}],...o});
-return{users:[U('u1','Aarav Mehta','Andheri',['customer','helper'],{}),U('u2','Meera Kulkarni','Bandra',['helper','customer'],{skills:['moving','boxes','furniture','packing'],cats:['Moving & Transport','Home Help'],exp:'4 years of local moving and packing help',avail:'Weekdays 9-7, Sat mornings',bio:'Careful with fragile items. Based near Bandra.'}),U('u3','Rohan Desai','Powai',['helper'],{skills:['laptop','windows','wifi','software','printer'],cats:['Computer Help','Repair'],exp:'IT support for 6 years',avail:'Evenings and weekends',bio:'I set up laptops, Wi-Fi and printers at home.'}),U('u4','Isha Nair','Thane',['helper'],{skills:['cleaning','kitchen','bathroom'],cats:['Cleaning','Home Help'],exp:'3 years in home cleaning',avail:'Mon-Sat 8-4',bio:'Thorough, quiet, on time.'}),U('u5','Platform Admin','Dadar',['admin'],{})],
-tasks:[t('T-1001','u1','Need help shifting boxes','Moving & Transport','Andheri',dt(1),800),t('T-1002','u1','Computer setup at home','Computer Help','Powai',dt(2),1200),t('T-1003','u1','Urgent document delivery','Delivery','Bandra',dt(0),350,{urg:'Urgent'}),t('T-1004','u1','Help with moving furniture','Moving & Transport','Thane',dt(3),1500),t('T-1005','u1','Basic home cleaning','Cleaning','Borivali',dt(2),900),t('T-1006','u1','Event setup assistance','Event Help','Dadar',dt(5),2000),t('T-1007','u1','Laptop software installation','Computer Help','Navi Mumbai',dt(1),500)],
-apps:[],msgs:[],notifs:[],reviews:[{id:'r1',task:'old',from:'u1',to:'u2',n:5,txt:'Careful and punctual.',at:now()-864e6},{id:'r2',task:'old2',from:'u1',to:'u3',n:4,txt:'Fixed my Wi-Fi in an hour.',at:now()-864e6}],reports:[],blocks:[],
-cats:['Home Help','Moving & Transport','Delivery','Cleaning','Computer Help','Repair','Errands','Event Help','Tutoring','Other']}}
-let D;try{D=JSON.parse(localStorage.getItem(K))}catch(e){}D=D||seed();let sess=null;try{sess=localStorage.getItem('th1s')}catch(e){}
-const save=()=>{try{localStorage.setItem(K,JSON.stringify(D));sess?localStorage.setItem('th1s',sess):localStorage.removeItem('th1s')}catch(e){}};
+let D={users:[],tasks:[],apps:[],msgs:[],notifs:[],reviews:[],reports:[],blocks:[],cats:[]},sess=null,DEMO=false;
+async function api(path,data){let r,j;try{r=await fetch(path,{method:data===undefined?'GET':'POST',credentials:'same-origin',headers:data===undefined?{}:{'Content-Type':'application/json'},body:data===undefined?undefined:JSON.stringify(data)});j=await r.json()}catch(e){throw new Error(r&&r.status===413?'Upload is too large.':'Could not reach the server. Check your connection.')}if(!r.ok||!j.ok)throw new Error(j.error||'Something went wrong.');return j}
+async function load(){const j=await api('/api/state');D=j;sess=j.me;DEMO=j.demo}
 const U=i=>D.users.find(u=>u.id===i),T=i=>D.tasks.find(t=>t.id===i),me=()=>sess&&U(sess);
 const R=i=>{const r=D.reviews.filter(x=>x.to===i);return r.length?{a:(r.reduce((s,x)=>s+x.n,0)/r.length).toFixed(1),c:r.length}:{a:0,c:0}};
 const rt=i=>{const r=R(i);return r.c?`<span class=st>★ ${r.a}</span> <small>(${r.c})</small>`:'<small>New</small>'};
@@ -81,7 +76,6 @@ const fd=d=>{const n=Math.round((new Date(d)-new Date(dt(0)))/864e5);return n===
 const ago=t=>{const m=Math.max(1,Math.round((now()-t)/6e4));return m<60?m+'m ago':m<1440?Math.round(m/60)+'h ago':Math.round(m/1440)+'d ago'};
 const sc=s=>'s-'+s.replace(/ /g,''),av=u=>`<span class=av>${E(u.name[0])}</span>`;
 function toast(m){const t=$('#ts');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2600)}
-function notify(to,txt,link){D.notifs.unshift({id:id('n'),to,txt,link,read:false,at:now()})}
 const go=h=>{location.hash=h};
 const empty=(h,p,l,a)=>`<div class=em><h3>${h}</h3><p class=mu>${p}</p>${l?`<a class="btn p" href="${l}">${a}</a>`:''}</div>`;
 const card=t=>`<a class=tk href="#/task/${t.id}"><div class=r><span class=chip>${E(t.cat)}</span><span class="sb ${sc(t.status)}">${t.status}</span></div><h3>${E(t.title)}</h3><p class=mu>${E(t.area)} · ${fd(t.date)}${t.urg==='Urgent'?' · Urgent':''}</p><div class=r><b>₹${t.budget}</b><small>${ago(t.at)} · ${rt(t.by)}</small></div></a>`;
@@ -107,7 +101,7 @@ function vAuth(reg,msg){return`<div class=w style="max-width:460px;padding:36px 
 ${reg?`<label>I want to</label><select name=role><option value=customer>Post tasks (Customer)</option><option value=helper>Do tasks (Helper)</option><option value=both>Both</option></select><label>Your area</label><select name=area>${AREAS.map(a=>`<option>${a}</option>`).join('')}</select>`:''}
 ${err(msg)}<button class="btn p" style="width:100%;margin-top:16px">${reg?'Sign up':'Log in'}</button></form>
 <p class=mu style="margin-top:14px">${reg?'Have an account? <a href="#/auth" class=un>Log in</a>':'New here? <a href="#/auth/new" class=un>Create an account</a>'}</p></div>
-${reg?'':`<div class=card style="margin-top:14px"><b>Demo access</b><div class=r style="margin-top:10px"><button class="btn s" data-a=demo data-i=u1>Customer</button><button class="btn s" data-a=demo data-i=u2>Helper</button><button class="btn s" data-a=demo data-i=u5>Admin</button></div><small>Demo password for all: demo1234</small></div>`}</div>`}
+${reg||!DEMO?'':`<div class=card style="margin-top:14px"><b>Demo access</b><div class=r style="margin-top:10px"><button class="btn s" data-a=demo data-i=aarav@demo.in>Customer</button><button class="btn s" data-a=demo data-i=meera@demo.in>Helper</button></div><small>Demo password for all: demo1234</small></div>`}</div>`}
 function vBrowse(){return`<div class="w pg"><h2>Browse tasks</h2><div class="card g" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px">
 <div><label>Search</label><input data-fl=q value="${E(F.q)}" placeholder="Task, skill, area"></div>
 <div><label>Category</label><select data-fl=cat><option value="">All</option>${D.cats.map(c=>`<option ${F.cat===c?'selected':''}>${E(c)}</option>`).join('')}</select></div>
@@ -136,7 +130,7 @@ if(own&&['Open','Assigned'].includes(t.status))act+=`<button class="btn d" data-
 if((own&&t.helper)||asg)act+=`<a class=btn href="#/msgs/${tid}/${t.helper}">Message</a>`;
 return`<div class="w pg"><a class=mu href="#/browse">← Back to tasks</a><div class="g" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:12px;align-items:start"><div class="g">
 <div class=card><div class=r><span class=chip>${E(t.cat)}</span><span class="sb ${sc(t.status)}">${t.status}</span></div><h2 style="margin:10px 0">${E(t.title)}</h2><p>${E(t.desc)}</p>${t.img?`<img src="${t.img}" alt="Task photo" style="max-width:100%;border-radius:12px;margin-top:12px">`:''}
-<div class="g g3" style="margin-top:14px"><div><small>Location</small><br><b>${E(t.area)}</b></div><div><small>Date and time</small><br><b>${fd(t.date)}, ${E(t.time)}</b></div><div><small>Budget</small><br><b>₹${t.budget}</b></div><div><small>Applications</small><br><b>${apps.length}</b></div></div>
+<div class="g g3" style="margin-top:14px"><div><small>Location</small><br><b>${E(t.area)}</b></div><div><small>Date and time</small><br><b>${fd(t.date)}, ${E(t.time)}</b></div><div><small>Budget</small><br><b>₹${t.budget}</b></div><div><small>Applications</small><br><b>${t.napps}</b></div></div>
 ${t.req?`<p class=mu style="margin-top:12px">Requirements: ${E(t.req)}</p>`:''}<small>ID ${t.id} · posted ${ago(t.at)} · ${E(t.urg)}</small>
 ${err(msg)}<div class=r style="justify-content:flex-start;margin-top:14px">${act}${m&&!own?`<button class="btn s" data-a=report data-i=task data-j=${tid}>Report task</button>`:''}</div></div>
 ${done&&(own||asg)&&!rv?`<form class=card data-f=review><input type=hidden name=task value=${tid}><h3>Rate ${own?E(h.name):E(c.name)}</h3><label>Rating</label><select name=n><option value=5>5 ★ Excellent</option><option value=4>4 ★ Good</option><option value=3>3 ★ Okay</option><option value=2>2 ★ Poor</option><option value=1>1 ★ Bad</option></select><label>Review</label><textarea name=txt placeholder="How did it go?"></textarea><button class="btn p" style="margin-top:12px">Submit review</button></form>`:''}
@@ -187,10 +181,10 @@ return`<div class="w pg"><h2>Admin dashboard</h2><div class="g g3">${S.map(s=>`<
 /* ---------- router ---------- */
 const need=()=>{if(!me()){go('#/auth');toast('Please log in first');return false}return true};
 function render(msg){const [path,qs]=(location.hash.slice(1)||'/').split('?'),p=path.split('/').filter(Boolean),m=me(),pr=new URLSearchParams(qs||'');
-if(m&&m.susp){sess=null;save()}let h;const g=(f)=>{if(!me())return vAuth(0,'Please log in to continue.');return f()};
+let h;const g=(f)=>{if(!me())return vAuth(0,'Please log in to continue.');return f()};
 switch(p[0]||''){case'':h=vHome();break;case'auth':h=vAuth(p[1]==='new',msg);break;case'browse':if(pr.get('cat'))F.cat=pr.get('cat');if(pr.get('q')!==null)F.q=pr.get('q');if(pr.get('area')!==null)F.area=pr.get('area');h=vBrowse();break;
 case'task':h=vTask(p[1],msg);break;case'post':h=g(()=>vPost(msg));break;case'my':h=g(vMy);break;case'msgs':h=g(()=>vMsgs(p[1],p[2]));break;case'notifs':h=g(vNotifs);break;case'profile':h=vProfile(p[1]);break;case'settings':h=g(()=>vSettings(msg));break;case'dash':h=g(vDash);break;case'admin':h=g(vAdmin);break;default:h=empty('Page not found','That page does not exist.','#/','Go home')}
-$('#app').innerHTML=h;chrome(p[0]||'');if(p[0]==='msgs'&&p[1]&&p[2]&&m){D.msgs.forEach(x=>{if(x.task===p[1]&&x.to===m.id&&!x.read)x.read=true});save();chrome(p[0])}
+$('#app').innerHTML=h;chrome(p[0]||'');if(p[0]==='msgs'&&p[1]&&p[2]&&m&&D.msgs.some(x=>x.task===p[1]&&x.to===m.id&&!x.read)){D.msgs.forEach(x=>{if(x.task===p[1]&&x.to===m.id)x.read=true});chrome(p[0]);api('/api/messages/read',{task:p[1]}).catch(()=>{})}
 const c=$('#chat');if(c)c.scrollTop=c.scrollHeight;if(!msg)scrollTo(0,0);io();hero()}
 function chrome(cur){const m=me(),H=m&&m.mode==='helper',un=m?D.notifs.filter(n=>n.to===m.id&&!n.read).length:0,um=m?D.msgs.filter(x=>x.to===m.id&&!x.read).length:0;
 const L=[['','Home'],['browse','Browse'],...(m?[[H?'my':'post',H?'My Tasks':'Post Task'],['my','My Tasks'],['msgs','Messages'],['dash','Dashboard']].filter((x,i,a)=>a.findIndex(y=>y[0]===x[0])===i):[]),...(m&&m.roles.includes('admin')?[['admin','Admin']]:[])];
@@ -199,43 +193,40 @@ $('#nr').innerHTML=m?`<a class="btn s bd" href="#/notifs" aria-label=Notificatio
 $('#bn').innerHTML=[['','⌂','Home'],['browse','⌕','Browse'],['post','＋','Post'],['msgs','✉','Msgs'+(um?' ('+um+')':'')],[m?'dash':'auth','☺',m?'Me':'Login']].map(b=>`<a href="#/${b[0]}" class="${cur===b[0]?'on':''}"><b>${b[1]}</b>${b[2]}</a>`).join('')}
 /* ---------- actions ---------- */
 const A={
-demo(i){sess=i;save();go(i==='u5'?'#/admin':'#/dash');toast('Logged in as demo user')},
-login(d){const u=D.users.find(x=>x.email.toLowerCase()===d.email.trim().toLowerCase());if(!u||u.pw!==d.pw)return render('Invalid email or password.');if(u.susp)return render('This account is suspended.');sess=u.id;save();go('#/dash')},
-reg(d){const e=d.email.trim().toLowerCase();if(d.name.trim().length<2)return render('Please enter your name.');if(D.users.some(x=>x.email===e))return render('An account with this email already exists.');if(d.pw.length<8||!/\d/.test(d.pw)||!/[a-z]/i.test(d.pw))return render('Password needs 8+ characters with letters and a number.');
-const roles=d.role==='both'?['customer','helper']:[d.role];const u={id:id('u'),name:d.name.trim(),email:e,pw:d.pw,area:d.area,roles,mode:roles[0],at:now(),skills:[],cats:[],exp:'',avail:'',bio:'',ver:'Profile not yet verified'};D.users.push(u);sess=u.id;save();go('#/settings');toast('Welcome! Set up your profile')},
-logout(){sess=null;save();go('#/');render()},mode(){const m=me();m.mode=m.mode==='helper'?'customer':'helper';save();render()},
+async demo(e){try{const j=await api('/api/login',{email:e,pw:'demo1234'});await load();go('#/dash');render();toast('Logged in as demo user')}catch(x){toast(x.message)}},
+async login(d){try{const j=await api('/api/login',{email:d.email,pw:d.pw});await load();go(j.admin?'#/admin':'#/dash');render()}catch(x){render(x.message)}},
+async reg(d){if(d.name.trim().length<2)return render('Please enter your name.');if(d.pw.length<8||!/\d/.test(d.pw)||!/[a-z]/i.test(d.pw))return render('Password needs 8+ characters with letters and a number.');
+try{await api('/api/register',{name:d.name,email:d.email,pw:d.pw,role:d.role,area:d.area});await load();go('#/settings');render();toast('Welcome! Set up your profile')}catch(x){render(x.message)}},
+async logout(){try{await api('/api/logout',{})}catch(x){}await load().catch(()=>{});go('#/');render()},
+async mode(){try{await api('/api/mode',{});await load();render()}catch(x){toast(x.message)}},
 hs(d){go('#/browse?q='+encodeURIComponent(d.q)+'&area='+encodeURIComponent(d.area))},
-async post(d,f){if(!need())return;const m=me();if(!m.roles.includes('customer')){m.roles.push('customer')}
+async post(d,f){if(!need())return;
 if(d.title.trim().length<5)return render('Please add a clear title (5+ characters).');if(d.desc.trim().length<15)return render('Please describe the task in a little more detail.');if(!d.date||d.date<dt(0))return render('Choose a preferred date from today onward.');if(!(+d.budget>0))return render('Enter a budget greater than zero.');
 let img='';const fl=f.img.files[0];if(fl){if(fl.size>3e5)return render('Image is too large. Use one under 300KB.');img=await new Promise(r=>{const x=new FileReader();x.onload=()=>r(x.result);x.readAsDataURL(fl)})}
-const t={id:'T-'+(1000+D.tasks.length+1+Math.floor(Math.random()*9)),by:m.id,title:d.title.trim(),desc:d.desc.trim(),cat:d.cat,sub:d.sub,area:d.area,date:d.date,time:d.time,budget:+d.budget,urg:d.urg,req:d.req,img,status:'Open',helper:null,at:now(),hist:[{s:'Open',t:now(),by:m.id}]};D.tasks.unshift(t);
-helpers().filter(u=>u.id!==m.id).map(u=>[u,match(u,t)]).filter(x=>x[1]>=55).forEach(([u,p])=>notify(u.id,`New task matches you (${p}%): ${t.title}`,'#/task/'+t.id));save();go('#/task/'+t.id);toast('Task posted. ID '+t.id)},
-apply(d){if(!need())return;const m=me(),t=T(d.task);if(!t||t.status!=='Open')return render('This task is no longer available.');if(t.by===m.id)return render('You cannot apply to your own task.');if(D.apps.some(a=>a.task===t.id&&a.by===m.id))return render('You have already applied to this task.');
-if(d.msg.trim().length<10)return render('Write a short proposal (10+ characters).');if(!(+d.price>0))return render('Enter a proposed price.');if(!d.eta.trim())return render('Add an estimated completion time.');
-D.apps.push({id:id('a'),task:t.id,by:m.id,msg:d.msg.trim(),price:+d.price,eta:d.eta,exp:d.exp,st:'Pending',at:now()});notify(t.by,`${m.name} applied to "${t.title}"`,'#/task/'+t.id);if(t.hist.length===1)t.hist.push({s:'Applications Received',t:now(),by:m.id});save();render();toast('Application submitted successfully.')},
-accept(i){const a=D.apps.find(x=>x.id===i),t=T(a.task),m=me();if(!m||t.by!==m.id)return toast('Not allowed');if(t.status!=='Open')return toast('Task no longer open');
-D.apps.filter(x=>x.task===t.id).forEach(x=>{x.st=x.id===i?'Accepted':'Rejected'});t.helper=a.by;t.status='Assigned';t.budget=a.price;t.hist.push({s:'Assigned',t:now(),by:m.id});D.apps.filter(x=>x.task===t.id&&x.id!==i).forEach(x=>notify(x.by,`Another helper was chosen for "${t.title}"`,'#/task/'+t.id));
-notify(a.by,`Your application was accepted: "${t.title}"`,'#/task/'+t.id);D.msgs.push({id:id('m'),task:t.id,from:m.id,to:a.by,txt:`Hi! I accepted your application for "${t.title}". Let's confirm the details here.`,at:now(),read:false});save();render();toast('Helper assigned')},
-reject(i){const a=D.apps.find(x=>x.id===i),t=T(a.task);if(!me()||t.by!==me().id)return;a.st='Rejected';notify(a.by,`Your application was not selected: "${t.title}"`,'#/task/'+t.id);save();render()},
-status(tid,s){const t=T(tid),m=me(),ok=(s==='In Progress'&&t.status==='Assigned'&&t.helper===m.id)||(s==='Completed'&&t.status==='In Progress'&&(t.by===m.id||t.helper===m.id));if(!ok)return toast('That change is not allowed right now');t.status=s;t.hist.push({s,t:now(),by:m.id});
-const o=t.by===m.id?t.helper:t.by;notify(o,s==='Completed'?`"${t.title}" was marked completed. Please leave a rating.`:`"${t.title}" is now in progress`,'#/task/'+tid);save();render();toast('Status: '+s)},
-cancel(tid){const t=T(tid);if(!me()||t.by!==me().id||!['Open','Assigned'].includes(t.status))return;t.status='Cancelled';t.hist.push({s:'Cancelled',t:now(),by:t.by});if(t.helper)notify(t.helper,`"${t.title}" was cancelled`,'#/task/'+tid);save();render()},
-review(d){const m=me(),t=T(d.task);if(!t||!['Completed','Reviewed'].includes(t.status)||(t.by!==m.id&&t.helper!==m.id))return toast('Not allowed');if(D.reviews.some(r=>r.task===t.id&&r.from===m.id))return toast('You already reviewed this task');
-const to=t.by===m.id?t.helper:t.by;D.reviews.push({id:id('r'),task:t.id,from:m.id,to,n:Math.min(5,Math.max(1,+d.n)),txt:d.txt.trim(),at:now()});if(t.by===m.id){t.status='Reviewed';t.hist.push({s:'Reviewed',t:now(),by:m.id})}notify(to,`You received a new ${d.n}-star rating`,'#/profile/'+to);save();render();toast('Thanks for your review')},
-send(d){const m=me();if(!d.txt.trim())return;D.msgs.push({id:id('m'),task:d.task,from:m.id,to:d.to,txt:d.txt.trim(),at:now(),read:false});notify(d.to,`New message from ${m.name}`,`#/msgs/${d.task}/${d.h}`);save();render(' ')},
-readN(i){const n=D.notifs.find(x=>x.id===i);if(n){n.read=true;save()}},readAll(){D.notifs.forEach(n=>{if(n.to===sess)n.read=true});save();render()},
+try{const j=await api('/api/tasks',{title:d.title,desc:d.desc,cat:d.cat,sub:d.sub,area:d.area,date:d.date,time:d.time,budget:+d.budget,urg:d.urg,req:d.req,img});await load();go('#/task/'+j.id);toast('Task posted. ID '+j.id)}catch(x){render(x.message)}},
+async apply(d){if(!need())return;try{await api('/api/tasks/'+encodeURIComponent(d.task)+'/apply',{msg:d.msg,price:+d.price,eta:d.eta,exp:d.exp});await load();render();toast('Application submitted successfully.')}catch(x){render(x.message)}},
+async accept(i){try{await api('/api/apps/'+encodeURIComponent(i)+'/accept',{});await load();render();toast('Helper assigned')}catch(x){toast(x.message)}},
+async reject(i){try{await api('/api/apps/'+encodeURIComponent(i)+'/reject',{});await load();render()}catch(x){toast(x.message)}},
+async status(tid,s){try{await api('/api/tasks/'+encodeURIComponent(tid)+'/status',{s});await load();render();toast('Status: '+s)}catch(x){toast(x.message)}},
+async cancel(tid){if(!confirm('Cancel this task?'))return;try{await api('/api/tasks/'+encodeURIComponent(tid)+'/cancel',{});await load();render()}catch(x){toast(x.message)}},
+async review(d){try{await api('/api/tasks/'+encodeURIComponent(d.task)+'/review',{n:+d.n,txt:d.txt});await load();render();toast('Thanks for your review')}catch(x){toast(x.message)}},
+async send(d){if(!d.txt.trim())return;try{await api('/api/messages',{task:d.task,to:d.to,txt:d.txt});await load();render(' ')}catch(x){toast(x.message)}},
+readN(i){const n=D.notifs.find(x=>x.id===i);if(n&&!n.read){n.read=true;api('/api/notifs/'+encodeURIComponent(i)+'/read',{}).catch(()=>{})}},
+async readAll(){try{await api('/api/notifs/read-all',{});await load();render()}catch(x){toast(x.message)}},
 tab(t){TAB=t;render(' ')},
-report(type,tg){if(!need())return;const why=prompt('What is the problem? (short description)');if(!why)return;D.reports.push({id:id('p'),type,target:tg,why,by:sess,at:now(),done:false});save();toast('Report sent to the TaskHub team')},
-block(i){if(!need())return;if(!D.blocks.some(b=>b.by===sess&&b.u===i))D.blocks.push({by:sess,u:i});save();toast('User blocked. You will not receive their messages.')},
-prof(d,f){const m=me();m.name=d.name.trim()||m.name;m.area=d.area;m.bio=d.bio;m.exp=d.exp;m.avail=d.avail;m.skills=d.skills.split(',').map(s=>s.trim()).filter(Boolean);m.cats=[...f.querySelectorAll('[name=cats]:checked')].map(x=>x.value);const r=[];if(f.rc.checked)r.push('customer');if(f.rh.checked)r.push('helper');if(m.roles.includes('admin'))r.push('admin');if(!r.length)return render('Pick at least one role.');m.roles=r;if(!r.includes(m.mode))m.mode=r[0];save();toast('Profile saved');go('#/dash')},
-susp(i){const u=U(i);u.susp=!u.susp;save();render(' ')},rmTask(i){D.tasks=D.tasks.filter(t=>t.id!==i);D.reports.forEach(r=>{if(r.target===i)r.done=true});save();render(' ');toast('Task removed')},rdone(i){D.reports.find(r=>r.id===i).done=true;save();render(' ')}};
+async report(type,tg){if(!need())return;const why=prompt('What is the problem? (short description)');if(!why)return;try{await api('/api/reports',{type,target:tg,why});toast('Report sent to the TaskHub team')}catch(x){toast(x.message)}},
+async block(i){if(!need())return;try{await api('/api/blocks',{u:i});await load();toast('User blocked. You will not receive their messages.')}catch(x){toast(x.message)}},
+async prof(d,f){const cats=[...f.querySelectorAll('[name=cats]:checked')].map(x=>x.value);try{await api('/api/profile',{name:d.name,area:d.area,bio:d.bio,exp:d.exp,avail:d.avail,skills:d.skills,cats,rc:f.rc.checked,rh:f.rh.checked});await load();toast('Profile saved');go('#/dash')}catch(x){render(x.message)}},
+async susp(i){try{await api('/api/admin/users/'+encodeURIComponent(i)+'/suspend',{});await load();render(' ')}catch(x){toast(x.message)}},
+async rmTask(i){if(!confirm('Remove this task?'))return;try{await api('/api/admin/tasks/'+encodeURIComponent(i)+'/remove',{});await load();render(' ');toast('Task removed')}catch(x){toast(x.message)}},
+async rdone(i){try{await api('/api/admin/reports/'+encodeURIComponent(i)+'/done',{});await load();render(' ')}catch(x){toast(x.message)}}};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b)A[b.dataset.a]?.(b.dataset.i,b.dataset.j,b)});
 document.addEventListener('submit',e=>{const f=e.target.closest('[data-f]');if(f){e.preventDefault();A[f.dataset.f]?.(Object.fromEntries(new FormData(f)),f)}});
 document.addEventListener('input',e=>{const x=e.target.dataset.fl;if(x){F[x]=e.target.value;$('#bl').innerHTML=bList()}});
-addEventListener('hashchange',()=>render());
+addEventListener('hashchange',()=>{load().then(()=>render(),()=>render())});
 /* ---------- hero depth + reveals ---------- */
 function hero(){const h=$('#hero');if(!h)return;const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;if(rm)return;
 const s=()=>h.style.setProperty('--p',Math.min(1,scrollY/innerHeight).toFixed(3));s();addEventListener('scroll',s,{passive:true});h.addEventListener('pointermove',e=>{h.style.setProperty('--mx',(e.clientX/innerWidth-.5).toFixed(2));h.style.setProperty('--my',(e.clientY/innerHeight-.5).toFixed(2))})}
 function io(){const o=new IntersectionObserver(es=>es.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in2');o.unobserve(x.target)}}),{threshold:.1});document.querySelectorAll('.rv').forEach(n=>o.observe(n))}
-save();render();
+$('#app').innerHTML='<div class="w pg"><p class=mu>Loading…</p></div>';load().then(()=>render(),e=>{$('#app').innerHTML=`<div class="w pg">${empty('Cannot load TaskHub',E(e.message),'#/','Try again')}</div>`});
 </script></body></html>

@@ -3,4 +3,6 @@ __pycache__/
 .venv/
 venv/
 .env
-taskhub.db
+*.db
+*.db-wal
+*.db-shm
