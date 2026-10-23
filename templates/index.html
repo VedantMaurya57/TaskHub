@@ -25,7 +25,7 @@ nav .w{display:flex;align-items:center;gap:18px;height:60px}
 .g{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .r{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 h1{font-size:clamp(34px,6vw,64px);line-height:1.04;letter-spacing:-.035em}h2{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.02em}h3{font-size:17px}
-.m,small,.mu{color:var(--soft)}small{font-size:12.5px}.pg{padding:28px 0 100px}.pg>h2{margin-bottom:16px}
+.m,small,.mu{color:var(--soft)}small{font-size:12.5px}.pg{padding-top:28px;padding-bottom:100px}.pg>h2{margin-bottom:16px}
 .chip{background:#38E1C61a;color:var(--ac);border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700}
 .sb{border-radius:99px;padding:3px 10px;font-size:12px;font-weight:700;background:var(--sf2)}.s-Open{color:var(--ok)}.s-Assigned{color:var(--ac2)}.s-InProgress{color:var(--wr)}.s-Completed,.s-Reviewed{color:var(--ac)}.s-Cancelled{color:var(--bad)}
 .tk{display:flex;flex-direction:column;gap:8px;background:var(--sf);border:1px solid var(--ln);border-radius:18px;padding:16px;transition:transform .2s,border-color .2s}.tk:hover{transform:translateY(-3px);border-color:var(--ac)}
@@ -55,7 +55,7 @@ textarea{min-height:90px;resize:vertical}input[type=checkbox]{width:auto;min-hei
 .rv{opacity:0;transform:translateY(22px);transition:opacity .6s,transform .6s}.rv.in2{opacity:1;transform:none}
 .sec{padding:56px 0}
 footer{border-top:1px solid var(--ln);padding:24px 0 90px;color:var(--soft);font-size:13px}
-@media(max-width:760px){.nl{display:none}.bn{display:flex}.f2{grid-template-columns:1fr}.fc.a,.fc.c{display:none}.fc{width:170px;font-size:13px}.fc.b2{right:-30px;top:6%}.fc.d{right:-40px;bottom:2%}.hero .in{margin:0}#ts{bottom:80px}}
+@media(max-width:760px){.nl{display:none}#nr{gap:6px!important;flex-wrap:nowrap}#nr .btn{padding:7px 10px;font-size:12px;white-space:nowrap}#nr a[href^="#/profile"]{display:none}.bn{display:flex}.f2{grid-template-columns:1fr}.fc.a,.fc.c{display:none}.fc{width:170px;font-size:13px}.fc.b2{right:-30px;top:6%}.fc.d{right:-40px;bottom:2%}.hero .in{margin:0}#ts{bottom:80px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}.world,.floor,.fc{transform:none!important}.rv{opacity:1;transform:none}}
 </style></head><body>
 <nav><div class="w"><a class="lg" href="#/"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#38E1C6"/><path d="M8 11h16M16 11v13" stroke="#04201B" stroke-width="3.4" stroke-linecap="round"/><circle cx="24" cy="23" r="2.4" fill="#04201B"/></svg>TaskHub</a><div class="nl" id="nl"></div><div class="sp"></div><div id="nr" class="r" style="gap:8px"></div></div></nav>
